@@ -1,0 +1,32 @@
+services:
+  # Use root/r00tpa55 as user/password credentials
+  mariadb:
+    image: mariadb
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: r00tpa55
+    networks:
+      - jsp-net
+    volumes:
+      - jsp-bookstore-data:/var/lib/mysql
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+      ADMINER_DESIGN: "lucas-sandery" # https://github.com/vrana/adminer/tree/master/designs
+    ports:
+      - "${ADMINER_PORT:-8081}:8080"
+    networks:
+      - jsp-net
+
+networks:
+  jsp-net:
+    driver: bridge
+
+volumes:
+  jsp-bookstore-data:
+    external: true
