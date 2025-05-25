@@ -18,8 +18,7 @@ ENV PORT=8080
 WORKDIR /usr/local/tomcat
 
 # Setup Tomcat in a development configuration
-RUN mv webapps webapps.safe && mv webapps.dist/ webapps && chmod 1777 /usr/local/tomcat/webapps
-RUN mkdir /usr/local/tomcat/conf/Catalina && chmod 1777 /usr/local/tomcat/conf/Catalina
+RUN mv webapps webapps.safe && mv webapps.dist/ webapps
 COPY ./Config/conf/tomcat-users.xml /usr/local/tomcat/conf/
 RUN chmod 644 /usr/local/tomcat/conf/tomcat-users.xml
 # Adjust context.xml for Docker DEsktop IP ranges
@@ -37,7 +36,7 @@ COPY ./Config/webapps/host-manager/META-INF/context.xml /usr/local/tomcat/webapp
 
 # This default user is created in the openshift/base-centos7 image
 # USER 1001
-USER 1
+USER 0
 
 # TODO: Set the default port for applications built using this image
 # EXPOSE ${PORT}
