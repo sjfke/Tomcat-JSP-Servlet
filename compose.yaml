@@ -1,6 +1,6 @@
 services:
   # Use root/r00tpa55 as user/password credentials
-  database:
+  dbs:
     image: mariadb
     # container_name: database
     restart: unless-stopped
@@ -28,12 +28,22 @@ services:
     restart: unless-stopped
     # container_name: adminer
     environment:
-      ADMINER_DEFAULT_SERVER: database
+      ADMINER_DEFAULT_SERVER: dbs
       ADMINER_DESIGN: "lucas-sandery" # https://github.com/vrana/adminer/tree/master/designs
     ports:
       - "8491:8080"
     networks:
       - jsp-net
+
+  alpine:
+     # container_name: alpine
+     build:
+       context: ./alpine
+       dockerfile: ./Dockerfile
+     networks:
+       - jsp-net
+     volumes:
+      - .\alpine\repo:/home/devel/repo
 
 networks:
   jsp-net:

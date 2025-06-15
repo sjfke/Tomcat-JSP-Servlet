@@ -14,6 +14,9 @@ target/
 .idea/**/dictionaries
 .idea/**/shelf
 
+# Project-specific stuff
+alpine/.idea/
+
 # AWS User-specific
 .idea/**/aws.xml
 
