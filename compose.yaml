@@ -35,15 +35,15 @@ services:
     networks:
       - jsp-net
 
-  alpine:
-     # container_name: alpine
-     build:
-       context: ./alpine
-       dockerfile: ./Dockerfile
-     networks:
-       - jsp-net
-     volumes:
-      - .\alpine\repo:/home/devel/repo
+#  alpine:
+#     # container_name: alpine
+#     build:
+#       context: ./alpine
+#       dockerfile: ./Dockerfile
+#     networks:
+#       - jsp-net
+#     volumes:
+#      - .\alpine\repo:/home/devel/repo
 
 networks:
   jsp-net:
