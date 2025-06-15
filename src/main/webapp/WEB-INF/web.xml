@@ -9,17 +9,17 @@
 
 	<context-param>
 		<param-name>jdbcURL</param-name>
-		<param-value>jdbc:mysql://dbs:3306/Bookstore</param-value>
+		<param-value>jdbc:mariadb://dbs:3306/Bookstore</param-value>
 	</context-param>
 	
 	<context-param>
 		<param-name>jdbcUsername</param-name>
-		<param-value>app</param-value>
+		<param-value>bsapp</param-value>
 	</context-param>
 	
 	<context-param>
 		<param-name>jdbcPassword</param-name>
-		<param-value>Pastw0rld</param-value>
+		<param-value>P@ssw0rd</param-value>
 	</context-param>
 	
 	<servlet>
