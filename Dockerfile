@@ -21,7 +21,7 @@ WORKDIR /usr/local/tomcat
 RUN mv webapps webapps.safe && mv webapps.dist/ webapps
 COPY ./Config/conf/tomcat-users.xml /usr/local/tomcat/conf/
 RUN chmod 644 /usr/local/tomcat/conf/tomcat-users.xml
-# Adjust context.xml for Docker DEsktop IP ranges
+# Adjust context.xml for Docker Desktop IP ranges
 COPY ./Config/webapps/docs/META-INF/context.xml /usr/local/tomcat/webapps/docs/META-INF/
 COPY ./Config/webapps/examples/META-INF/context.xml /usr/local/tomcat/webapps/examples/META-INF/
 COPY ./Config/webapps/manager/META-INF/context.xml /usr/local/tomcat/webapps/manager/META-INF/
