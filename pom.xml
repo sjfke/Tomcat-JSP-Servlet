@@ -6,7 +6,7 @@
 
     <groupId>net.codejava.javaee</groupId>
     <artifactId>bookstore</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
@@ -26,6 +26,27 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven3-plugin</artifactId>
+                <version>1.10.20</version>
+                <configuration>
+                    <container>
+                        <containerId>tomcat10x</containerId>
+                        <type>remote</type>
+                    </container>
+                    <configuration>
+                        <type>runtime</type>
+                        <properties>
+                            <cargo.remote.username>badmin</cargo.remote.username>
+                            <cargo.remote.password>badmin</cargo.remote.password>
+                            <cargo.servlet.port>8480</cargo.servlet.port>
+                            <cargo.tomcat.manager.url>http://localhost:8480/manager/text
+                            </cargo.tomcat.manager.url>
+                        </properties>
+                    </configuration>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -47,6 +68,13 @@
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>3.5.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.codehaus.cargo/cargo-maven3-plugin -->
+        <dependency>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven3-plugin</artifactId>
+            <version>1.10.20</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
