@@ -115,7 +115,7 @@ Password: r00tpa55
 Database: <blank>
 ```
 
-### Build Using Maven
+### Build and Deploy to Tomcat container Using Maven
 
 Tomcat 10 onwards requires the ``JSP`` pages use ``<%@ taglib uri="jakarta.tags.core" prefix="c" %>`` 
 
@@ -129,17 +129,10 @@ difference ``dependencies``, so use the following to avoid many wasted hours.
 To build the `Bookstore-0.0.1-SNAPSHOT.war` file from the command line
 
 ```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers
-PS C:\Users\sjfke> mvn -f .\Bookstore\pom.xml clean package
-
-# Docker
-PS C:\Users\sjfke> docker build --tag localhost/bookstore:latest -f .\Dockerfile $PWD
-
-# Podman
-PS C:\Users\sjfke> podman build --tag localhost/bookstore:latest --squash -f .\Dockerfile
+PS C:\Users\sjfke> mvn clean package   # create war file
+PS C:\Users\sjfke> mvn cargo:undeploy  # remove bookstore application on tomcat container
+PS C:\Users\sjfke> mvn cargo:deploy    # deploy bookstore application on tomcat container
 ```
-
-### Deploy `Bookstore` war file to Tomcat
 
 ### Testing the `Bookstore` application in Eclipse
 
@@ -451,5 +444,29 @@ FAIL - Invalid parameters supplied for command [/deploy]
 PS1> curl.exe -u badmin:badmin http://localhost:8480/manager/text/deploy?path=bookstore-1.5-SNAPSHOT
 FAIL - Invalid parameters supplied for command [/deploy]
 
-
 ```
+
+### Maven 3 Cargo Plugin
+
+The Tomcat text manager deploy didn't work on Windows, and is a bit **clunky**, so this project uses the ``Maven 3 Cargo plugin``
+
+A typical deployment sequence being
+
+```console
+PS1> mvn clean package
+PS1> mvn cargo:undeploy
+PS1> mvn cargo:deploy
+```
+
+> **Warning**
+>>
+>> **mvn install** deploys to the local ``.m2/repository``, which needs manual removal.
+
+
+
+
+* [Cargo - Tomcat 10.x](https://codehaus-cargo.atlassian.net/wiki/spaces/CARGO/pages/886439938/Tomcat+10.x)
+* [Maven 3 codehaus-cargo plugin](https://codehaus-cargo.atlassian.net/wiki/spaces/CARGO/pages/491631/Maven+3+Plugin)
+* [Common Maven Cargo Plugin Issues and How to Fix Them](https://javanexus.com/blog/common-maven-cargo-issues-fix)
+* [How to Deploy a WAR File to Tomcat](https://www.baeldung.com/tomcat-deploy-war), see 5.3 remote deploy
+* [Deploying legacy WARs to Tomcat 10.x onwards](https://codehaus-cargo.atlassian.net/wiki/spaces/CARGO/pages/2520383491/Deploying+legacy+WARs+to+Tomcat+10.x+onwards)
