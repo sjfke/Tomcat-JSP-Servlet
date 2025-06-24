@@ -39,19 +39,19 @@
                 </c:if>
 			<tr>
 				<th>Title:</th>
-				<td> 
+				<td>
 				<input type="text" name="title" size="45" value="<c:out value='${book.title}' />" />
 				</td>
 			</tr>
 			<tr>
 				<th>Author:</th>
-				<td> 
+				<td>
 				<input type="text" name="author" size="45" value="<c:out value='${book.author}' />" />
 				</td>
 			</tr>
 			<tr>
 				<th>Price:</th>
-				<td> 
+				<td>
 				<input type="text" name="price" size="5" value="<c:out value='${book.price}' />" />
 				</td>
 			</tr>
