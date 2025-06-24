@@ -1,119 +1,51 @@
-# Building Tomcat-JSP-Servlet
+# Tomcat-JSP-Servlet Development
 
-This document walks through building the application and setting up the environment.
-It is an abridged version of [tomcat-containers](https://github.com/sjfke/tomcat-containers/blob/main/README.md) 
-which focuses on building the application without any reference to [Eclipse IDE for Java Developers](https://www.eclipse.org/downloads/packages/release/2022-06/r/eclipse-ide-java-developers).
+This project uses **containers** to provide a development and testing environment.
 
-It uses ``Docker`` or ``Podman`` to create the development environment. 
+* ``tomcat`` - a tomcat 10.1.x container, built to include the documentation and examples
+* ``dbs`` - a MariaDB container, using docker volume, ``jsp-bookstore-data``
+* ``adminer`` - a database WebUI management
+* ``jsp-net`` - dedicated docker network
+
+The example ``Tomcat`` application is based on [tomcat-containers](https://github.com/sjfke/tomcat-containers/blob/main/README.md) but makes no reference to ``Eclipse ``, nor
+how the code was developed. 
+
+The ``tomcat`` container listens on port ``8480``, not the default ``8080`` to avoid port conflicts.
+
+The Java development was done with [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download).
+
+``Maven`` uses ``org.codehaus.cargo.cargo-maven3-plugin`` to un/deploy the ``WAR`` file, and is installed 
+locally on the development laptop, although it is possible to *containerize* 
+it, [Apache Maven is a software project management and comprehension tool](https://hub.docker.com/_/maven).
+
+To build the `Bookstore-0.0.1-SNAPSHOT.war` file from the command line
+
+```powershell
+PS C:\Users\sjfke> mvn clean package   # create war file
+PS C:\Users\sjfke> mvn cargo:undeploy  # remove bookstore application on tomcat container
+PS C:\Users\sjfke> mvn cargo:deploy    # deploy bookstore application on tomcat container
+```
+
+This project is an early stage of development and is restricted to:
+
+* ``Windows 11 (home)`` but ``Linux`` approach is planned
+* ``docker`` and ``docker compose``, although a ``podman`` approach is planned
+* ``maven``, although a ``gradle`` is planned.
+
+The ``Wharf`` folder contains ``README`` files, covering the detail of the local setup, such as ``DOCKER``, 
+``MAVEN`` and ``MARIADB``
 
 ## Prerequisites
 
-The following applications need to be available or installed.
+The following applications need installed locally.
 
-* Install one of the following, but not both:
-  * [Docker Desktop](./DOCKER.md)
-  * [Podman and Podman Desktop](./PODMAN.md)
-* Optionally install:
-  * [Tomcat](./TOMCAT.md)
-  * [MariaDB](./MARIADB.md)
+* [Docker Desktop](./Wharf/DOCKER.md)
+* [Maven](./Wharf/MAVEN.md)
 
-> **Note:** *Fedora does not install the java compiler by default*
+Setting up ``MariDB`` is covered in
 
-```console
-$ sudo dnf list installed | grep openjdk   # dnf
-$ sudo dnf list --intsalled | grep openjdk # dnf5 (fedora >= 42)
-java-17-openjdk-headless.x86_64                      1:17.0.9.0.9-3.fc39                 @updates
-# if openjdk-devel is missing
-$ sudo dnf install java-17-openjdk-devel.x86_64      # java-17
-$ sudo dnf install java-21-openjdk-devel.x86_64      # java-21 fedora 42
-$ sudo dnf install java-latest-openjdk-devel.x86_64  # java-24 fedora 42
-```
+* [MariaDB](./Wharf/MARIADB.md)
 
-## Creating MariaDB Database
-
-Assuming you have `MariaDB` running in your chosen container environment.
-
-### Create the `Bookstore.book` table
-
-* `docker compose` open a terminal on the `tomcat-containers-bookstoredb-1` container, see [MariaDB in Docker](./DOCKER.md#mariadb-in-docker)
-
-> ***Warning:*** `compose-mariadb-simple.yaml` hard-codes the DB root password
->
-> ***Note:***`compose-mariadb.yaml` avoids hard-coding the DB root password by using environment variables
->
-> > `--env-file env\mariadb` provides MariaDB root password
-> >
-> > `--env-file env\adminer` overrides Adminer defaults
-
-```powershell
-PS C:\Users\sjfke> docker volume ls                                                      # jsp_bookstoredata volume exists
-PS C:\Users\sjfke> docker volume create jsp-bookstore-data                               # create jsp-bookstore-data volume if DOES NOT exist
-PS C:\Users\sjfke> docker compose --env-file env/mariadb -f .\compose-mariadb.yaml up -d # adminer, mariadb using tomcat-containers_jspnet
-PS C:\Users\sjfke> docker exec -it tomcat-containers-bookstoredb-1 bash                  # container interactive shell (alt. sh)
-```
-
-> ***Note:***
->
-> Maria Database root password is in the `compose-mariadb-simple.yaml`, `env\mariadb`, and `compose.yaml` files.
-
-```sql
-# mariadb -u root -p
-Enter password:
-
-MariaDB [(none)]> create database Bookstore;
-MariaDB [(none)]> use Bookstore
-
-MariaDB [Bookstore]> drop table if exists book;
-MariaDB [Bookstore]> create table book(
-  `book_id` int(11) auto_increment primary key not null,
-  `title` varchar(128) unique key not null,
-  `author` varchar(45) not null,
-  `price` float not null
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
-
-MariaDB [Bookstore]> insert into book (title, author, price) values ('Thinking in Java', 'Bruce Eckel', '25.69');
-MariaDB [Bookstore]> select * from book;
-MariaDB [Bookstore]> exit;
-```
-
-### Create an application account and grant access
-
-```sql
-# mariadb -u root -p
-Enter password:
-MariaDB [(none)]> use Bookstore;
-MariaDB [Bookstore]> create user 'bsapp'@'%' identified by 'P@ssw0rd';
-MariaDB [Bookstore]> grant all privileges on Bookstore.* to 'bsapp'@'%';
-MariaDB [Bookstore]> flush privileges;
-MariaDB [Bookstore]> show grants for 'bsapp'@'%';
-MariaDB [Bookstore]> exit;
-```
-
-> #### Notice
->
-> * The *bsapp* account is not IP access restricted, i.e. not 'bsapp'@'localhost'.
-> * *Docker* will allocate a random RFC-1918 IP to the database when it is deployed.
-
-## Verify application account access
-
-```sql
-# mariadb -u bsapp -p Bookstore
-Enter password:
-MariaDB [Bookstore]> select * from book;
-MariaDB [Bookstore]> exit;
-```
-
-## Using *Adminer* Web Interface
-
-All of the above steps can be done and checked using through [adminer](http://localhost:8081/).
-
-```yaml
-System: MySQL
-Server: bookstoredb
-Username: root
-Password: r00tpa55
-Database: <blank>
-```
 
 ### Build and Deploy to Tomcat container Using Maven
 
@@ -128,116 +60,21 @@ difference ``dependencies``, so use the following to avoid many wasted hours.
 
 To build the `Bookstore-0.0.1-SNAPSHOT.war` file from the command line
 
-```console
+```powershell
 PS C:\Users\sjfke> mvn clean package   # create war file
 PS C:\Users\sjfke> mvn cargo:undeploy  # remove bookstore application on tomcat container
 PS C:\Users\sjfke> mvn cargo:deploy    # deploy bookstore application on tomcat container
-```
-
-### Testing the `Bookstore` application in Eclipse
-
-First the start the database
-
-***Podman-Compose*** from within the `Python` virtual environment.
-
-```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers
-(venv) PS C:\Users\sjfke> podman-compose -f .\compose-mariadb-simple.yaml up -d  # Start MariaDB and Adminer
-(venv) PS C:\Users\sjfke> Test-NetConnection localhost -Port 3306                # Check MariDB is up and accessible
-sjfke@unix $ nc -i 5 localhost 3306                                              # Check MariDB is up and accessible
-```
-
-***Docker***
-
-```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers
-PS C:\Users\sjfke> docker compose -f .\compose-mariadb-simple.yaml up -d  # Start MariaDB and Adminer
-PS C:\Users\sjfke> Test-NetConnection localhost -Port 3306                # Check MariDB is up and accessible
-sjfke@unix$ nc -i 5 localhost 3306                                        # Check MariDB is up and accessible
-```
-
-***Podman Kube***
-
-```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers\wharf\Podman
-PS C:\Users\sjfke> podman secret list                              # check secrets are loaded
-PS C:\Users\sjfke> podman volume list                              # check volume exists
-PS C:\Users\sjfke> podman network ls                               # check `jspnet` network exists
-PS C:\Users\sjfke> podman play kube --start .\adminer-pod.yaml     # Start Adminer
-PS C:\Users\sjfke> podman play kube --start .\bookstoredb-pod.yaml # Start MariaDB
-PS C:\Users\sjfke> Test-NetConnection localhost -Port 3306         # Check MariDB is up and accessible
-sjfke@unix$ nc -i 5 localhost 3306                                 # Check MariDB is up and accessible
-```
-
-On the `Servers` tab, *right-click* on the `Tomcat v9 Server at localhost`, and select `Start`
-
-Test using your browser or from `Powershell` or `UNIX` command line as shown
-
-```console
-PS C:\Users\sjfke> start http://localhost:8081           # Check Adminer is working
-PS C:\Users\sjfke> start http://localhost:8080           # Check Tomcat Server is working
-PS C:\Users\sjfke> start http://localhost:8080/Bookstore # Check application is working
-
-sjfke@unix$ firefox http://localhost:8081                # Check Adminer is working
-sjfke@unix$ firefox http://localhost:8080                # Check Tomcat Server is working
-sjfke@unix$ firefox http://localhost:8080/Bookstore      # Check application is working
-```
-
-Stopping and removing the database deployment
-
-***Podman-Compose*** from within the `Python` virtual environment.
-
-```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers
-(venv) PS C:\Users\sjfke> podman-compose -f .\compose-mariadb.yaml down # Ensure MariaDB and Adminer are stopped
-```
-
-***Docker***
-
-```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers
-PS C:\Users\sjfke> docker compose -f .\compose-mariadb.yaml down        # Ensure MariaDB and Adminer are stopped
-```
-
-***Podman Kube***
-
-```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers\wharf\Podman
-PS C:\Users\sjfke> podman play kube --down .\adminer-pod.yaml           # Ensure Adminer is stopped
-PS C:\Users\sjfke> podman play kube --down .\bookstoredb-pod.yaml       # Ensure MariaDB is stopped
-```
-
-### Testing the `Bookstore` application using `compose`
-
-Using the `compose-bookstore.yaml` file
-
-***Podman-Compose*** from within the `Python` virtual environment.
-
-```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers
-(venv) PS C:\Users\sjfke> podman-compose -f .\compose-bookstore.yaml up -d # Start Bookstore, MariaDB and Adminer
-PS C:\Users\sjfke> start http://localhost:8081                             # Check Adminer is working
-PS C:\Users\sjfke> start http://localhost:8080                             # Check Tomcat Server is working
-PS C:\Users\sjfke> start http://localhost:8080/Bookstore                   # Check application is working
-(venv) PS C:\Users\sjfke> podman-compose -f .\compose-bookstore.yaml down  # Start Bookstore, MariaDB and Adminer
-```
-
-***Docker***
-
-```console
-# Folder: C:\Users\sjfke\Github\tomcat-containers
-PS C:\Users\sjfke> docker compose -f .\compose-bookstore.yaml up -d        # Start Bookstore, MariaDB and Adminer
-PS C:\Users\sjfke> start http://localhost:8081                             # Check Adminer is working
-PS C:\Users\sjfke> start http://localhost:8080                             # Check Tomcat Server is working
-PS C:\Users\sjfke> start http://localhost:8080/Bookstore                   # Check application is working
-PS C:\Users\sjfke> docker compose -f .\compose-bookstore.yaml down         # Start Bookstore, MariaDB and Adminer
 ```
 
 ### Tomcat Maven Dependencies
 
 * [Tomcat Versions](https://cwiki.apache.org/confluence/display/TOMCAT/Tomcat+Versions)
 
-It is usually possible to update the subversion of the dependencies. 
+Using ``Tomcat 10.0.x``, ``Tomcat 10.1.x`` and ``Tomcat 11.x`` require 
+difference ``dependencies``, so use the following to avoid many wasted hours, which is copied 
+from [How to properly configure Jakarta EE libraries in Maven pom.xml for Tomcat?](https://stackoverflow.com/questions/65703840/how-to-properly-configure-jakarta-ee-libraries-in-maven-pom-xml-for-tomcat/65704617#65704617)
+
+It is usually possible to update the sub-version of the dependencies to the latest available.
 
 #### Tomcat 9.X
 
