@@ -63,4 +63,12 @@ OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"
 * [Apache Maven Project - WAR Plugin Documentation](https://maven.apache.org/plugins/maven-war-plugin/plugin-info.html)
 * [How to Deploy a WAR File to Tomcat](https://www.baeldung.com/tomcat-deploy-war)
 * [10 best practices to build a Java container with Docker](https://snyk.io/blog/best-practices-to-build-java-containers-with-docker/)
+* [MVN Repository](https://mvnrepository.com/)
+
+
+### Maven Plugins
+
+* [Maven 3 Cargo Plugin](https://codehaus-cargo.atlassian.net/wiki/spaces/CARGO/pages/491631/Maven+3+Plugin)
+* [Common Maven Cargo Plugin Issues and How to Fix Them](https://javanexus.com/blog/common-maven-cargo-issues-fix)
+* [How to Deploy a WAR File to Tomcat](https://www.baeldung.com/tomcat-deploy-war#3-remote-deploy)
 
