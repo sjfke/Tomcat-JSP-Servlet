@@ -33,17 +33,20 @@
         <form action="<c:out value="${formAction}"/>" method="post" class="pure-form pure-form-aligned">
             <fieldset>
                 <legend><c:out value="${legend}"/></legend>
+                <c:if test="${book != null}">
+                    <input type="hidden" name="id" value="<c:out value='${book.id}' />" />
+                </c:if>
                 <div class="pure-control-group">
                     <label for="title">Title:</label>
-                    <input id="title" type="text" placeholder="Title" size="45" />
+                    <input id="title" name="title" type="text" value="<c:out value='${book.title}' />" placeholder="Title" size="45" />
                 </div>
                 <div class="pure-control-group">
                     <label for="author">Author:</label>
-                    <input id="author" type="text" placeholder="Author" size="45" />
+                    <input id="author" name="author" type="text" value="<c:out value='${book.author}' />" placeholder="Author" size="45" />
                 </div>
                 <div class="pure-control-group">
                     <label for="price">Price:</label>
-                    <input id="price" type="text" placeholder="Price" size="5" />
+                    <input id="price" name="price" type="text" placeholder="Price" value="<c:out value='${book.price}' />" size="5" />
                 </div>
                 <div class="pure-controls">
                     <button type="submit" class="pure-button pure-button-primary">Submit</button>
