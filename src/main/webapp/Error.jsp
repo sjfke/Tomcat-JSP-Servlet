@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>Books Store Application</title>
 </head>
-<body>
+<body background="/bookstore/images/Twitch.png">
 	<div align="center">
 		<h1>Error</h1>
 		<h2><%=exception.getMessage() %><br/> </h2>
