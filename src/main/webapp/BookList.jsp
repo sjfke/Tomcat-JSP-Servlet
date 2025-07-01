@@ -9,7 +9,7 @@
     <title>Books Store Application</title>
  	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
 </head>
-<body>
+<body background="/bookstore/images/Almost.png">
     <div class="container">
         <div align="center">
             <h1>Books Management</h1>
