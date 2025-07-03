@@ -19,9 +19,11 @@ The ``tomcat`` container listens on port ``8480``, not the default ``8080`` to a
 
 The Java development was done with [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download).
 
-``Maven`` uses ``org.codehaus.cargo.cargo-maven3-plugin`` to un/deploy the ``WAR`` file, and is installed 
-locally on the development laptop, although it is possible to *containerize* 
-it, [Apache Maven is a software project management and comprehension tool](https://hub.docker.com/_/maven).
+``Maven`` is installed locally on the development laptop, although it is possible to *containerize* 
+it, [Apache Maven is a software project management and comprehension tool](https://hub.docker.com/_/maven) or use
+the bundled [IntelliJ IDEA Maven](https://www.jetbrains.com/help/idea/maven-support.html)
+
+The maven plugin ``org.codehaus.cargo.cargo-maven3-plugin`` is used to un/deploy the ``WAR`` file.
 
 To build the `Bookstore-0.0.1-SNAPSHOT.war` file from the command line
 
@@ -31,15 +33,17 @@ PS C:\Users\sjfke> mvn cargo:undeploy  # remove bookstore application on tomcat 
 PS C:\Users\sjfke> mvn cargo:deploy    # deploy bookstore application on tomcat container
 ```
 
+The ``Wharf`` folder contains ``README`` files, covering the detail of the local setup, such as [DOCKER](./Wharf/DOCKER.md), 
+[MAVEN](./Wharf/MAVEN.md), [MAVEN_DEPLOYMENT](./Wharf/MAVEN_DEPLOYMENT.md), [TOMCAT_MAVEN](./Wharf/TOMCAT_MAVEN.md) 
+and [MARIADB](./Wharf/MARIADB.md)
+
+## Future Updates
+
 This project is an early stage of development and is restricted to:
 
 * ``Windows 11 (home)`` but ``Linux`` approach is planned
 * ``docker`` and ``docker compose``, although a ``podman`` approach is planned
 * ``maven``, although a ``gradle`` is planned.
-
-The ``Wharf`` folder contains ``README`` files, covering the detail of the local setup, such as [DOCKER](./Wharf/DOCKER.md), 
-[MAVEN](./Wharf/MAVEN.md), [MAVEN_DEPLOYMENT](./Wharf/MAVEN_DEPLOYMENT.md), [TOMCAT_MAVEN](./Wharf/TOMCAT_MAVEN.md) 
-and [MARIADB](./Wharf/MARIADB.md)
 
 ## Prerequisites
 
@@ -53,10 +57,8 @@ Tomcat 10 onwards requires the ``JSP`` pages use ``<%@ taglib uri="jakarta.tags.
 
 Using an incorrect ``maven``  dependencies often results in ``java.lang.NoClassDefFoundError: javax/servlet/jsp/tagext/TagLibraryValidator`` errors.
 
-There is contradictory advice on how to do this, and ``Tomcat 10.0.x``, ``Tomcat 10.1.x`` and ``Tomcat 11.x`` require 
-difference ``dependencies``, so use the following to avoid many wasted hours.
-
-* [How to properly configure Jakarta EE libraries in Maven pom.xml for Tomcat?](https://stackoverflow.com/questions/65703840/how-to-properly-configure-jakarta-ee-libraries-in-maven-pom-xml-for-tomcat/65704617#65704617)
+There is contradictory advice on how to set up this properly, and furthermore ``Tomcat 10.0.x``, ``Tomcat 10.1.x`` and ``Tomcat 11.x`` require 
+difference ``dependencies``, so read [Tomcat Maven Dependencies](./Wharf/TOMCAT_MAVEN.md) to avoid many wasted hours.
 
 To build the `Bookstore-0.0.1-SNAPSHOT.war` file from the command line
 
@@ -71,7 +73,28 @@ To view the ``bookstore`` web application for the fist time.
 ```powershell
 PS C:\Users\sjfke> start http://localhost:8480/bookstore/
 ```
+## Tomcat Setup
 
+To set up ``Tomcat`` for development, the contents of the ``Config`` folder are used.
+
+This make ``docs``, ``examples``, ``host-manager`` and ``manger`` available and accessible on the ``Docker`` IP subnets.
+
+Two user roles are created, with the password being the same as the account name.
+
+* ``admin`` for ``host-manager`` and ``manger``
+* ``badmin`` for the Manager HTML interface
+
+The ``tomcat-users.xml``
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tomcat-users version="1.0" xmlns="http://tomcat.apache.org/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd">
+    <user password="admin" roles="manager-gui,manager-status,admin-gui" username="admin"/>
+    <user password="badmin" roles="manager-script,admin-script" username="badmin"/>
+</tomcat-users>
+```
 ## Tomcat Maven Dependencies
 
 Tomcat 10 onwards requires the ``JSP`` pages use ``<%@ taglib uri="jakarta.tags.core" prefix="c" %>`` 
@@ -92,3 +115,4 @@ Two approaches are described
 * [Tomcat Manager HTML interface](./Wharf/MAVEN_DEPLOYMENT.md#tomcat-manager-html-interface) 
 * [Maven 3 Cargo Plugin](./Wharf/MAVEN_DEPLOYMENT.md#maven-3-cargo-plugin)
 
+But it is the ``maven-3-cargo-plugin`` that is used.
