@@ -23,7 +23,45 @@ PS C:\Users\sjfke> docker compose -f .\compose-mariadb-simple.yaml up -d        
 >
 >   * `--env-file env\adminer` overrides Adminer defaults
 
-## Create the `Bookstore.book` table
+## Create the `Bookstore.book` table using an SQL script
+
+```powershell
+# Copy the file to the container
+PS C:\Users\sjfke> docker cp .\Wharf\bookstore.sql tomcat-jsp-servlet-dbs-1:/tmp/
+
+# Open an interactive shell
+PS C:\Users\sjfke> docker exec -it tomcat-jsp-servlet-dbs-1 bash  # container interactive shell (alt. sh)
+```
+
+From the interactive shell on ``tomcat-jsp-servlet-dbs-1``
+
+```bash
+# mariadb -u root -p
+Enter password:
+
+MariaDB [(none)]> source /tmp/bookstore.sql
+MariaDB [(none)]> use Bookstore
+MariaDB [Bookstore]> select * from book;
++---------+------------------+-------------+-------+
+| book_id | title            | author      | price |
++---------+------------------+-------------+-------+
+|      11 | Thinking in Java | Bruce Eckel | 25.69 |
++---------+------------------+-------------+-------+
+1 row in set (0.001 sec)
+
+MariaDB [Bookstore]> show grants for 'bsapp'@'%';
++------------------------------------------------------------------------------------------------------+
+| Grants for bsapp@%                                                                                   |
++------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `bsapp`@`%` IDENTIFIED BY PASSWORD '*8232A1298A49F710DBEE0B330C42EEC825D4190A' |
+| GRANT ALL PRIVILEGES ON `Bookstore`.* TO `bsapp`@`%`                                                 |
++------------------------------------------------------------------------------------------------------+
+2 rows in set (0.000 sec)
+
+exit;
+```
+
+## Manually create the `Bookstore.book` table
 
 ```powershell
 # Open an interactive shell

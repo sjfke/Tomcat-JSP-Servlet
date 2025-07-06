@@ -31,7 +31,9 @@ The maven plugin ``org.codehaus.cargo.cargo-maven3-plugin`` is used to un/deploy
 
 The following applications need installed locally, [Docker Desktop](./Wharf/DOCKER.md) and [Maven](Wharf/MAVEN.md)
 
-Setting up ``MariDB`` for the ``Bookstore`` application is covered in [MariaDB](./Wharf/MARIADB.md)
+### Setup of the Bookstore Database
+
+To create the ``Bookstore`` database and``bsapp`` application account, see [MariaDB](./Wharf/MARIADB.md)
 
 ## The Development Environment
 
