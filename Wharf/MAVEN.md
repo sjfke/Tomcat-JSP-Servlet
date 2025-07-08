@@ -5,7 +5,8 @@ an [Apache Maven is a software project management and comprehension tool](https:
 
 ## Prerequisites
 
-To function `Maven` requires a minimal `settings.xml` which usually has to be manually created.
+To function `Maven` requires a ``Java`` installation, accessible via ``JAVA_HOME``, and
+a minimal `settings.xml` which usually has to be manually created.
 
 * [Apache Maven Project - Settings Reference](https://maven.apache.org/settings.html)
 * [Maven Complete Reference - Appendix: Settings Details](https://www.sonatype.com/maven-complete-reference/settings-details)
@@ -41,7 +42,8 @@ Follow [How to Install Maven on Windows](https://phoenixnap.com/kb/install-maven
 
 * [Download latest Maven](https://maven.apache.org/download.cgi), such as `apache-maven-3.9.10`
 
-In ``System`` > ``Advanced system settings`` > ``Environment variables`` > ``System variables``
+In the ``Windows`` task bar search enter ``Environment variables`` which takes you to 
+``System Properties`` > ``Advanced system settings`` > ``Environment variables`` > ``System variables``
 
 * Create ``MAVEN_HOME`` = `C:\Program Files\Maven\apache-maven-3.9.10`
 * Update ``Path``, add ``%MAVEN_HOME%\bin``
