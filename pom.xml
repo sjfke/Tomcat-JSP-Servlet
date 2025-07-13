@@ -51,6 +51,12 @@
         </plugins>
     </build>
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven/maven-core -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.9.10</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/jakarta.servlet.jsp.jstl/jakarta.servlet.jsp.jstl-api -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
